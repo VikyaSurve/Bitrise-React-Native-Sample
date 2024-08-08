@@ -32,7 +32,7 @@ workflows:
         inputs:
         - content: |
             if [ ! -d "android/fastlane" ]; then
-              cd android
+              cd android 
               fastlane init
               cd ..
             fi
@@ -41,6 +41,7 @@ workflows:
         inputs:
         - content: |
             cd android
+            cd app
             fastlane bump_version
     - android-build@1:
         inputs:
