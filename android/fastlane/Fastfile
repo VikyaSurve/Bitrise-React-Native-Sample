@@ -3,25 +3,30 @@ default_platform(:android)
 platform :android do
   desc "Bump version code and version name"
   lane :bump_version do
-    version_code = get_version_code(
-      gradle_file_path: "./app/build.gradle"
-    )
-    version_name = get_version_name(
-      gradle_file_path: "./app/build.gradle"
-    )
+    # Read the build.gradle file
+    gradle_file = File.read("./app/build.gradle")
 
-    increment_version_code(
-      gradle_file_path: "./app/build.gradle"
-    )
+    # Extract the current versionCode and versionName
+    version_code = gradle_file.match(/versionCode\s+(\d+)/)[1].to_i
+    version_name = gradle_file.match(/versionName\s+"([^\"]+)"/)[1]
 
-    increment_version_name(
-      gradle_file_path: "./app/build.gradle",
-      version_name: "#{version_name}.#{version_code}"
-    )
+    # Increment the version code
+    new_version_code = version_code + 1
 
-    commit_version_bump(
-      message: "Version bump to #{version_name}.#{version_code}",
-      xcodeproj: nil,
+    # Increment the version name (assuming semantic versioning)
+    new_version_name = "#{version_name.split('.').first}.#{new_version_code}"
+
+    # Replace the versionCode and versionName in the build.gradle file
+    new_gradle_file = gradle_file.gsub(/versionCode\s+\d+/, "versionCode #{new_version_code}")
+    new_gradle_file = new_gradle_file.gsub(/versionName\s+"[^\"]+"/, "versionName \"#{new_version_name}\"")
+
+    # Write the changes back to the build.gradle file
+    File.write("./app/build.gradle", new_gradle_file)
+
+    # Commit the version bump
+    git_commit(
+      path: "./app/build.gradle",
+      message: "Version bump to #{new_version_name} (#{new_version_code})"
     )
   end
 end
