@@ -31,8 +31,8 @@ workflows:
         title: Fastlane Init  # Initialize Fastlane if not already initialized
         inputs:
         - content: |
-            if [ ! -d "$PROJECT_LOCATION/fastlane" ]; then
-              cd $PROJECT_LOCATION
+            if [ ! -d "android/fastlane" ]; then
+              cd android
               fastlane init
               cd ..
             fi
@@ -40,8 +40,8 @@ workflows:
         title: Bump Version with Fastlane
         inputs:
         - content: |
-            cd $PROJECT_LOCATION
-            fastlane android bump_version
+            cd android
+            fastlane bump_version
     - android-build@1:
         inputs:
         - project_location: "$PROJECT_LOCATION"
