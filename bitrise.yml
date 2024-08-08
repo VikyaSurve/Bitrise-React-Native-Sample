@@ -13,7 +13,6 @@ workflows:
     - activate-ssh-key@4:
         run_if: '{{getenv "SSH_RSA_PRIVATE_KEY" | ne ""}}'
     - git-clone@6: {}
-    - restore-cocoapods-cache@1: {}
     - restore-npm-cache@1: {}
     - restore-gradle-cache@1: {}
     - yarn@0:
@@ -28,7 +27,6 @@ workflows:
         inputs:
         - project_location: "$PROJECT_LOCATION"
     - save-npm-cache@1: {}
-    - save-cocoapods-cache@1: {}
     - save-gradle-cache@1: {}
     - deploy-to-bitrise-io@2: {}
   primary:
