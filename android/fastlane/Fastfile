@@ -5,28 +5,20 @@ platform :android do
   lane :bump_version do
     # Change to the correct directory for React Native
     Dir.chdir("android/app") do
-      # Read the build.gradle file
       gradle_file = File.read("build.gradle")
 
-      # Extract the current versionCode and versionName
       version_code = gradle_file.match(/versionCode\s+(\d+)/)[1].to_i
       version_name = gradle_file.match(/versionName\s+"([^\"]+)"/)[1]
 
-      # Increment the version code
       new_version_code = version_code + 1
-
-      # Increment the version name (assuming semantic versioning)
       new_version_name = "#{version_name.split('.').first}.#{new_version_code}"
 
-      # Replace the versionCode and versionName in the build.gradle file
       new_gradle_file = gradle_file.gsub(/versionCode\s+\d+/, "versionCode #{new_version_code}")
       new_gradle_file = new_gradle_file.gsub(/versionName\s+"[^\"]+"/, "versionName \"#{new_version_name}\"")
 
-      # Write the changes back to the build.gradle file
       File.write("build.gradle", new_gradle_file)
     end
 
-    # Commit the version bump
     git_commit(
       path: "android/app/build.gradle",
       message: "Version bump to #{new_version_name} (#{new_version_code})"
