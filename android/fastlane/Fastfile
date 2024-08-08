@@ -3,8 +3,11 @@ default_platform(:android)
 platform :android do
   desc "Bump version code and version name"
   lane :bump_version do
+    # Correct path for React Native project
+    gradle_file_path = "./android/app/build.gradle"
+
     # Read the build.gradle file
-    gradle_file = File.read("./app/build.gradle")
+    gradle_file = File.read(gradle_file_path)
 
     # Extract the current versionCode and versionName
     version_code = gradle_file.match(/versionCode\s+(\d+)/)[1].to_i
@@ -21,11 +24,11 @@ platform :android do
     new_gradle_file = new_gradle_file.gsub(/versionName\s+"[^\"]+"/, "versionName \"#{new_version_name}\"")
 
     # Write the changes back to the build.gradle file
-    File.write("./app/build.gradle", new_gradle_file)
+    File.write(gradle_file_path, new_gradle_file)
 
     # Commit the version bump
     git_commit(
-      path: "./app/build.gradle",
+      path: gradle_file_path,
       message: "Version bump to #{new_version_name} (#{new_version_code})"
     )
   end
