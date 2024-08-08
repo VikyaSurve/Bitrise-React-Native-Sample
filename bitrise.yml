@@ -22,8 +22,11 @@ workflows:
     - install-missing-android-tools@3:
         inputs:
         - gradlew_path: "$PROJECT_LOCATION/gradlew"
-    - fastlane-install@2:  # Add Fastlane installation
+    - script@1:
         title: Install Fastlane
+        inputs:
+        - content: |
+            sudo gem install fastlane -NV
     - script@1:
         title: Fastlane Init  # Initialize Fastlane if not already initialized
         inputs:
@@ -33,10 +36,12 @@ workflows:
               fastlane init
               cd ..
             fi
-    - fastlane@2:  # Run Fastlane lane for version control
+    - script@1:
         title: Bump Version with Fastlane
         inputs:
-        - lane: "android bump_version"
+        - content: |
+            cd $PROJECT_LOCATION
+            fastlane android bump_version
     - android-build@1:
         inputs:
         - project_location: "$PROJECT_LOCATION"
