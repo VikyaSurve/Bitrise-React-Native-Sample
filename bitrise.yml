@@ -4,16 +4,15 @@ default_step_lib_source: https://github.com/bitrise-io/bitrise-steplib.git
 project_type: react-native
 trigger_map:
 - push_branch: "*"
-  workflow: primary
+  workflow: deploy
 - pull_request_source_branch: "*"
-  workflow: primary
+  workflow: deploy
 workflows:
   deploy:
     steps:
     - activate-ssh-key@4:
         run_if: '{{getenv "SSH_RSA_PRIVATE_KEY" | ne ""}}'
     - git-clone@6: {}
-    - restore-cocoapods-cache@1: {}
     - restore-npm-cache@1: {}
     - restore-gradle-cache@1: {}
     - yarn@0:
@@ -21,30 +20,6 @@ workflows:
         - cache_local_deps: 'yes'
         - verbose_log: 'yes'
         - command: install
-    - cocoapods-install@1:
-        inputs:
-        - source_root_path: "$BITRISE_SOURCE_DIR/ios"
-    - certificate-and-profile-installer@1: {}
-    - xcode-archive@4:
-        inputs:
-        - project_path: "$BITRISE_PROJECT_PATH"
-        - scheme: "$BITRISE_SCHEME"
-        - export_method: "$BITRISE_EXPORT_METHOD"
-        - team_id: "$BITRISE_TEAM"
-        - compile_bitcode: 'no'
-        - upload_bitcode: 'no'
-        - force_code_sign_identity: "$BITRISE_CODE_SIGNING_IDENTITY"
-        - force_provisioning_profile_specifier: ''
-        - force_provisioning_profile: "$BITRISE_PROFILE_ID"
-        - verbose_log: 'no'
-        - configuration: Debug
-    - xcode-test@4:
-        inputs:
-        - generate_code_coverage_files: 'yes'
-        - should_build_before_test: 'no'
-        - test_repetition_mode: up_until_maximum_repetitions
-        - output_tool: xcodebuild
-        - xcodebuild_test_options: "-parallel-testing-enabled=YES -parallel-testing-worker-count=3"
     - install-missing-android-tools@3:
         inputs:
         - gradlew_path: "$PROJECT_LOCATION/gradlew"
@@ -52,7 +27,6 @@ workflows:
         inputs:
         - project_location: "$PROJECT_LOCATION"
     - save-npm-cache@1: {}
-    - save-cocoapods-cache@1: {}
     - save-gradle-cache@1: {}
     - deploy-to-bitrise-io@2: {}
   primary:
