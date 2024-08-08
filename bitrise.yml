@@ -28,15 +28,6 @@ workflows:
         - content: |
             sudo gem install fastlane -NV
     - script@1:
-        title: Fastlane Init  # Initialize Fastlane if not already initialized
-        inputs:
-        - content: |
-            if [ ! -d "android/fastlane" ]; then
-              cd android 
-              fastlane init
-              cd ..
-            fi
-    - script@1:
         title: Bump Version with Fastlane
         inputs:
         - content: |
