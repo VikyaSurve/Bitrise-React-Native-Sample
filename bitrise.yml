@@ -1,11 +1,10 @@
----
-format_version: '8'
+format_version: "8"
 default_step_lib_source: https://github.com/bitrise-io/bitrise-steplib.git
 project_type: react-native
 trigger_map:
-- push_branch: "*"
+- push_branch: '*'
   workflow: primary
-- pull_request_source_branch: "*"
+- pull_request_source_branch: '*'
   workflow: primary
 workflows:
   deploy:
@@ -17,18 +16,23 @@ workflows:
     - restore-gradle-cache@1: {}
     - yarn@0:
         inputs:
-        - cache_local_deps: 'yes'
-        - verbose_log: 'yes'
+        - cache_local_deps: true
+        - verbose_log: true
         - command: install
     - install-missing-android-tools@3:
         inputs:
-        - gradlew_path: "$PROJECT_LOCATION/gradlew"
+        - gradlew_path: $PROJECT_LOCATION/gradlew
     - android-build@1:
         inputs:
-        - project_location: "$PROJECT_LOCATION"
+        - project_location: $PROJECT_LOCATION
     - save-npm-cache@1: {}
     - save-gradle-cache@1: {}
     - deploy-to-bitrise-io@2: {}
+    - appcenter-deploy-android@2:
+        inputs:
+        - owner_name: $BITRISE_APP_TITLE
+        - app_name: $BITRISE_APP_TITLE
+        - api_token: $APP_CENTER_API_KEY
   primary:
     steps:
     - activate-ssh-key@4:
@@ -53,7 +57,7 @@ app:
     MODULE: app
   - opts:
       is_expand: false
-    VARIANT: ''
+    VARIANT: ""
   - opts:
       is_expand: false
     BITRISE_PROJECT_PATH: ios/TodoMVC.xcworkspace
@@ -72,3 +76,6 @@ app:
   - opts:
       is_expand: false
     BITRISE_CODE_SIGNING_IDENTITY: 'iPhone Developer: Dev Portal Bot Bitrise (E89JV3W9K4)'
+meta:
+  bitrise.io:
+    machine_type_id: g2.mac.large
