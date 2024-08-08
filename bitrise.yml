@@ -33,7 +33,7 @@ workflows:
         - content: |
             cd android
             cd app
-            fastlane bump_version
+            bundle exec fastlane bump_version
     - android-build@1:
         inputs:
         - project_location: "$PROJECT_LOCATION"
