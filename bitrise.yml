@@ -3,9 +3,9 @@ default_step_lib_source: https://github.com/bitrise-io/bitrise-steplib.git
 project_type: react-native
 trigger_map:
 - push_branch: '*'
-  workflow: primary
+  workflow: deploy
 - pull_request_source_branch: '*'
-  workflow: primary
+  workflow: deploy
 workflows:
   deploy:
     steps:
@@ -24,29 +24,13 @@ workflows:
         - gradlew_path: $PROJECT_LOCATION/gradlew
     - android-build@1:
         inputs:
-        - project_location: $PROJECT_LOCATION
-    - save-npm-cache@1: {}
-    - save-gradle-cache@1: {}
+        - project_location: $PROJECT_LOCATION 
     - deploy-to-bitrise-io@2: {}
     - appcenter-deploy-android@2:
         inputs:
         - owner_name: $BITRISE_APP_TITLE
         - app_name: $BITRISE_APP_TITLE
         - api_token: $APP_CENTER_API_KEY
-  primary:
-    steps:
-    - activate-ssh-key@4:
-        run_if: '{{getenv "SSH_RSA_PRIVATE_KEY" | ne ""}}'
-    - git-clone@6: {}
-    - script@1:
-        title: Do anything with Script step
-    - yarn@0:
-        inputs:
-        - command: install
-    - yarn@0:
-        inputs:
-        - command: test
-    - deploy-to-bitrise-io@2: {}
 app:
   envs:
   - opts:
